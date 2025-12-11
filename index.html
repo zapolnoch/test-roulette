@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Roulette</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="roulette">
+      <div class="wrapper">
+        <div class="strip" id="strip">
+          <img src="images/W-1.png" />
+          <img src="images/W-2.png" />
+          <img src="images/W-4.png" />
+          <img src="images/W-5.png" />
+          <img src="images/W-6.png" />
+          <img src="images/W-7.png" />
+        </div>
+      </div>
+
+      <div class="pointer"></div>
+    </div>
+
+    <button id="spinBtn">Прокрутить</button>
+
+    <script>
+      const strip = document.getElementById("strip");
+      const btn = document.getElementById("spinBtn");
+      const wrapper = document.querySelector(".wrapper");
+      const originalItems = Array.from(strip.children);
+      const originalCount = originalItems.length;
+
+      // Дублируем элементы несколько раз, чтобы создать длинную бесшовную ленту
+      const REPEAT_TIMES = 5;
+      for (let i = 0; i < REPEAT_TIMES; i++) {
+        originalItems.forEach((el) => {
+          const clone = el.cloneNode(true);
+          strip.appendChild(clone);
+        });
+      }
+
+      // Запуск рулетки
+      btn.addEventListener("click", () => {
+        const itemWidth = 120;
+        const gap = 8;
+        const step = itemWidth + gap;
+        const itemCount = originalCount;
+
+        const extraRounds = 3; // Сколько раз провернуть рулетку до замедления
+
+        // Расчёт позиции выигрыша относительно центра окна
+        const fullRoundWidth = step * itemCount;
+        const targetIndex = Math.floor(Math.random() * itemCount);
+        const viewCenter = wrapper.offsetWidth / 2;
+        const itemCenter = targetIndex * step + itemWidth / 2;
+
+        // останавливаем так, чтобы центр выбранного айтема совпал с центром wrapper:
+        const targetOffset =
+          viewCenter - (extraRounds * fullRoundWidth + itemCenter);
+        strip.style.transform = "translateX(0px)";
+
+        anime({
+          targets: strip,
+          translateX: targetOffset,
+          duration: 4000,
+          easing: "easeOutCubic",
+        });
+      });
+    </script>
+  </body>
+</html>
